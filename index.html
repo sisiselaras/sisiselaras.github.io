@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio Name — Architecture & Landscape</title>
+<meta name="description" content="Architecture, landscape and interior design studio.">
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}
+</script>
+<style>
+:root{
+  --bg:#fff; --fg:#111; --muted:#777; --line:#e4e4e4; --soft:#f3f3f1;
+  --font:"Helvetica Neue",Helvetica,Arial,"Inter",system-ui,sans-serif;
+  --pad:clamp(16px,2.5vw,36px);
+}
+/* Dark applies if the visitor chose it, or if they haven't chosen and their OS is dark */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#101010;--fg:#f2f2f2;--muted:#9a9a9a;--line:#2a2a2a;--soft:#1a1a1a;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#101010;--fg:#f2f2f2;--muted:#9a9a9a;--line:#2a2a2a;--soft:#1a1a1a;color-scheme:dark}
+:root[data-theme="light"]{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--fg);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+img{display:block;max-width:100%}
+
+/* Header */
+header{position:fixed;inset:0 0 auto 0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:20px var(--pad);color:#fff;mix-blend-mode:difference}
+.logo{font-size:1.25rem;font-weight:500;letter-spacing:-.02em}
+.right{display:flex;align-items:center;gap:28px}
+nav{display:flex;gap:28px;font-size:.95rem}
+nav a:hover{opacity:.6}
+.menu-btn{display:none;font-size:.95rem}
+.theme-btn{font-size:.95rem}
+.theme-btn:hover{opacity:.6}
+
+/* Hero */
+.hero{position:relative;height:100svh;min-height:520px;display:flex;align-items:flex-end;padding:var(--pad);color:#fff;
+  background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.55)),var(--img,linear-gradient(135deg,#5b6770,#2b3238 60%,#1a1e22));background-size:cover;background-position:center}
+.hero h1{font-weight:400;font-size:clamp(2.2rem,6.5vw,6rem);line-height:1;letter-spacing:-.04em;max-width:14ch}
+.hero p{margin-top:16px;max-width:42ch;font-size:1.05rem;opacity:.9}
+
+/* Projects */
+section{padding:clamp(56px,9vw,120px) var(--pad)}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px;margin-bottom:32px}
+.sec-head h2{font-weight:400;font-size:clamp(1.6rem,3vw,2.4rem);letter-spacing:-.03em}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button{padding:6px 14px;border:1px solid var(--line);border-radius:99px;font-size:.9rem;color:var(--muted);transition:.2s}
+.filters button:hover{color:var(--fg);border-color:var(--fg)}
+.filters button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(12px,1.6vw,24px)}
+.card{grid-column:span 4;display:block}
+.card.wide{grid-column:span 8}
+.card.full{grid-column:span 12}
+.thumb{position:relative;overflow:hidden;aspect-ratio:4/3;background:var(--soft)}
+.card.wide .thumb{aspect-ratio:16/9}
+.card.full .thumb{aspect-ratio:21/9}
+.thumb>div{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.card:hover .thumb>div,.card:focus-visible .thumb>div{transform:scale(1.04)}
+.meta{display:flex;justify-content:space-between;gap:12px;padding-top:10px;font-size:.95rem}
+.meta span:last-child{color:var(--muted);text-align:right}
+.card[hidden]{display:none}
+
+/* About */
+.about{background:var(--soft)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--pad)}
+.about h2{font-weight:400;font-size:clamp(1.8rem,4vw,3.4rem);line-height:1.08;letter-spacing:-.035em;max-width:18ch}
+.about p{max-width:56ch;font-size:1.1rem;margin-bottom:1em}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--pad);margin-top:64px;border-top:1px solid var(--line);padding-top:24px}
+.facts strong{display:block;font-weight:400;font-size:clamp(2rem,4vw,3.4rem);letter-spacing:-.04em;line-height:1}
+.facts span{color:var(--muted);font-size:.95rem}
+
+/* Contact */
+.offices{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--pad)}
+.offices h3{font-weight:500;font-size:1rem;margin-bottom:6px}
+.offices p{color:var(--muted)}
+.big-mail{display:inline-block;margin-bottom:56px;font-size:clamp(1.8rem,5vw,4rem);letter-spacing:-.04em;border-bottom:2px solid currentColor;line-height:1.1}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:24px var(--pad);border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+
+/* Project overlay */
+dialog{border:0;width:100%;max-width:none;height:100%;max-height:none;background:var(--bg);color:var(--fg);overflow:auto}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.dlg-bar{position:sticky;top:0;display:flex;justify-content:space-between;padding:20px var(--pad);background:var(--bg);z-index:2}
+.dlg-body{padding:0 var(--pad) 80px;max-width:1400px;margin:0 auto}
+.dlg-hero{aspect-ratio:16/8;background-size:cover;background-position:center;margin-bottom:32px}
+.dlg-body h2{font-weight:400;font-size:clamp(2rem,5vw,4.5rem);letter-spacing:-.04em;line-height:1}
+.dlg-cols{display:grid;grid-template-columns:1fr 2fr;gap:var(--pad);margin-top:32px}
+.dlg-cols dl{display:grid;grid-template-columns:auto 1fr;gap:6px 20px;font-size:.95rem;align-content:start}
+.dlg-cols dt{color:var(--muted)}
+.dlg-cols p{font-size:1.1rem;max-width:60ch}
+
+/* Mobile menu */
+.mobile-nav{position:fixed;inset:0;z-index:15;background:var(--bg);color:var(--fg);display:none;flex-direction:column;justify-content:center;padding:var(--pad);gap:8px}
+.mobile-nav.open{display:flex}
+.mobile-nav a{font-size:2.6rem;letter-spacing:-.04em}
+
+@media (max-width:860px){
+  nav{display:none}.menu-btn{display:block}
+  .card,.card.wide{grid-column:span 6}.card.full{grid-column:span 12}
+  .about-grid,.dlg-cols{grid-template-columns:1fr}
+}
+@media (max-width:540px){
+  .card,.card.wide,.card.full{grid-column:span 12}
+  .card .thumb,.card.wide .thumb,.card.full .thumb{aspect-ratio:4/3}
+  .facts{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#top" class="logo">Studio Name</a>
+  <div class="right">
+    <nav aria-label="Main">
+      <a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a>
+    </nav>
+    <button class="theme-btn" id="theme" aria-label="Switch color theme">Dark</button>
+    <button class="menu-btn" aria-expanded="false" aria-controls="mnav">Menu</button>
+  </div>
+</header>
+<div class="mobile-nav" id="mnav">
+  <a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a>
+</div>
+
+<!-- To use a real hero photo: change --img below to url('images/hero.jpg') -->
+<main id="top">
+  <div class="hero" style="--img:none">
+    <div>
+      <h1>Buildings that belong to their place</h1>
+      <p>An architecture and landscape studio working across culture, housing and public space.</p>
+    </div>
+  </div>
+
+  <section id="work">
+    <div class="sec-head">
+      <h2>Selected work</h2>
+      <div class="filters" role="group" aria-label="Filter projects"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="about" class="about">
+    <div class="about-grid">
+      <h2>We design for the people who will live with the building longest.</h2>
+      <div>
+        <p>Replace this with your studio story: how you started, how you work, and what you believe about architecture.</p>
+        <p>Keep it to two short paragraphs. Visitors skim; the projects do the talking.</p>
+      </div>
+    </div>
+    <div class="facts">
+      <div><strong>2009</strong><span>Founded</span></div>
+      <div><strong>40+</strong><span>Completed projects</span></div>
+      <div><strong>18</strong><span>Team members</span></div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <a class="big-mail" href="mailto:hello@yourstudio.com">hello@yourstudio.com</a>
+    <div class="offices">
+      <div><h3>Jakarta</h3><p>Jl. Example No. 1<br>+62 21 000 0000</p></div>
+      <div><h3>Press</h3><p>press@yourstudio.com</p></div>
+      <div><h3>Careers</h3><p>jobs@yourstudio.com</p></div>
+    </div>
+  </section>
+</main>
+
+<footer><span>© <span id="yr"></span> Studio Name</span><a href="https://instagram.com/" rel="noopener">Instagram</a></footer>
+
+<dialog id="dlg" aria-label="Project details">
+  <div class="dlg-bar"><span class="logo">Studio Name</span><button id="close">Close</button></div>
+  <div class="dlg-body">
+    <div class="dlg-hero" id="d-hero"></div>
+    <h2 id="d-title"></h2>
+    <div class="dlg-cols">
+      <dl id="d-meta"></dl>
+      <p id="d-text"></p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* ---------- EDIT YOUR PROJECTS HERE ----------
+   img: path to a photo in /images (e.g. "images/harbour.jpg"). Leave "" to show a placeholder.
+   size: "" | "wide" | "full" controls the grid width. */
+const projects = [
+  {title:"Harbour Library", place:"Surabaya, Indonesia", year:2024, type:"Culture", size:"wide", img:"", c:["#6f7f8a","#2e3a42"],
+   client:"City of Surabaya", area:"12,400 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {title:"Terrace Houses", place:"Bandung, Indonesia", year:2023, type:"Housing", size:"", img:"", c:["#b9a58a","#6b5a45"],
+   client:"Private", area:"3,200 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {title:"Mountain Pavilion", place:"Bromo, Indonesia", year:2023, type:"Landscape", size:"", img:"", c:["#7d9a85","#2f4a3a"],
+   client:"National Parks Agency", area:"640 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {title:"Riverside Masterplan", place:"Jakarta, Indonesia", year:2022, type:"Urban", size:"full", img:"", c:["#8aa0b3","#33465a"],
+   client:"DKI Jakarta", area:"28 ha", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {title:"Studio Loft", place:"Yogyakarta, Indonesia", year:2022, type:"Interior", size:"", img:"", c:["#c9c3b8","#6e675c"],
+   client:"Private", area:"280 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {title:"Market Hall", place:"Semarang, Indonesia", year:2021, type:"Culture", size:"wide", img:"", c:["#a98a78","#4d3427"],
+   client:"Semarang Municipality", area:"9,800 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."}
+];
+/* --------------------------------------------- */
+
+const grid = document.getElementById('grid');
+const filtersEl = document.querySelector('.filters');
+const bg = p => p.img ? `url('${p.img}')` : `linear-gradient(135deg,${p.c[0]},${p.c[1]})`;
+
+projects.forEach((p,i)=>{
+  const a = document.createElement('a');
+  a.href = '#project-'+i; a.className = 'card '+p.size; a.dataset.type = p.type;
+  a.innerHTML = `<div class="thumb"><div style="background-image:${bg(p)}"></div></div>
+    <div class="meta"><span>${p.title}</span><span>${p.place}, ${p.year}</span></div>`;
+  a.addEventListener('click',e=>{e.preventDefault();openProject(i)});
+  grid.appendChild(a);
+});
+
+['All',...new Set(projects.map(p=>p.type))].forEach((t,i)=>{
+  const b = document.createElement('button');
+  b.textContent = t; b.setAttribute('aria-pressed', i===0);
+  b.onclick = ()=>{
+    filtersEl.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b));
+    grid.querySelectorAll('.card').forEach(c=>c.hidden = t!=='All' && c.dataset.type!==t);
+  };
+  filtersEl.appendChild(b);
+});
+
+const dlg = document.getElementById('dlg');
+function openProject(i){
+  const p = projects[i];
+  document.getElementById('d-hero').style.backgroundImage = bg(p);
+  document.getElementById('d-title').textContent = p.title;
+  document.getElementById('d-text').textContent = p.text;
+  document.getElementById('d-meta').innerHTML =
+    `<dt>Location</dt><dd>${p.place}</dd><dt>Year</dt><dd>${p.year}</dd><dt>Type</dt><dd>${p.type}</dd><dt>Client</dt><dd>${p.client}</dd><dt>Area</dt><dd>${p.area}</dd>`;
+  dlg.showModal();
+}
+document.getElementById('close').onclick = ()=>dlg.close();
+dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+
+const mbtn = document.querySelector('.menu-btn'), mnav = document.getElementById('mnav');
+mbtn.onclick = ()=>{const o = mnav.classList.toggle('open');mbtn.setAttribute('aria-expanded',o);mbtn.textContent=o?'Close':'Menu'};
+mnav.querySelectorAll('a').forEach(a=>a.onclick=()=>{mnav.classList.remove('open');mbtn.textContent='Menu';mbtn.setAttribute('aria-expanded',false)});
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* Theme toggle: remembers the choice, otherwise follows the visitor's OS setting */
+const themeBtn = document.getElementById('theme');
+const mq = window.matchMedia('(prefers-color-scheme: dark)');
+const isDark = () => {
+  const t = document.documentElement.dataset.theme;
+  return t ? t === 'dark' : mq.matches;
+};
+const syncBtn = () => { themeBtn.textContent = isDark() ? 'Light' : 'Dark'; };
+themeBtn.onclick = () => {
+  const next = isDark() ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('theme', next); } catch (e) {}
+  syncBtn();
+};
+mq.addEventListener('change', syncBtn);
+syncBtn();
+</script>
+</body>
+</html>
