@@ -1,0 +1,54 @@
+media:
+  input: images
+  output: images
+
+content:
+  - name: projects
+    label: Projects
+    type: file
+    path: data/projects.json
+    format: json
+    list: true
+    fields:
+      - name: title
+        label: Project name
+        type: string
+        required: true
+      - name: place
+        label: Location (city, country)
+        type: string
+      - name: year
+        label: Year completed
+        type: number
+      - name: type
+        label: Category
+        type: select
+        options:
+          values: [Culture, Housing, Landscape, Urban, Interior]
+      - name: size
+        label: Size on the homepage
+        type: select
+        options:
+          values:
+            - name: ""
+              label: Normal
+            - name: wide
+              label: Wide
+            - name: full
+              label: Full width
+      - name: img
+        label: Main photo
+        type: image
+      - name: gallery
+        label: More photos
+        type: image
+        list: true
+      - name: client
+        label: Client
+        type: string
+      - name: area
+        label: Size of the building (e.g. 3,200 m²)
+        type: string
+      - name: text
+        label: Description
+        type: text

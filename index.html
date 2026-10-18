@@ -53,7 +53,7 @@ section{padding:clamp(56px,9vw,120px) var(--pad)}
 .filters button:hover{color:var(--fg);border-color:var(--fg)}
 .filters button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(12px,1.6vw,24px)}
+.grid{display:grid;grid-auto-flow:dense;grid-template-columns:repeat(12,1fr);gap:clamp(12px,1.6vw,24px)}
 .card{grid-column:span 4;display:block}
 .card.wide{grid-column:span 8}
 .card.full{grid-column:span 12}
@@ -89,6 +89,8 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .dlg-body{padding:0 var(--pad) 80px;max-width:1400px;margin:0 auto}
 .dlg-hero{aspect-ratio:16/8;background-size:cover;background-position:center;margin-bottom:32px}
 .dlg-body h2{font-weight:400;font-size:clamp(2rem,5vw,4.5rem);letter-spacing:-.04em;line-height:1}
+.dlg-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(12px,1.6vw,24px);margin-top:48px}
+.dlg-gallery img{width:100%;height:auto}
 .dlg-cols{display:grid;grid-template-columns:1fr 2fr;gap:var(--pad);margin-top:32px}
 .dlg-cols dl{display:grid;grid-template-columns:auto 1fr;gap:6px 20px;font-size:.95rem;align-content:start}
 .dlg-cols dt{color:var(--muted)}
@@ -181,60 +183,81 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
       <dl id="d-meta"></dl>
       <p id="d-text"></p>
     </div>
+    <div class="dlg-gallery" id="d-gallery"></div>
   </div>
 </dialog>
 
 <script>
-/* ---------- EDIT YOUR PROJECTS HERE ----------
-   img: path to a photo in /images (e.g. "images/harbour.jpg"). Leave "" to show a placeholder.
-   size: "" | "wide" | "full" controls the grid width. */
-const projects = [
-  {title:"Harbour Library", place:"Surabaya, Indonesia", year:2024, type:"Culture", size:"wide", img:"", c:["#6f7f8a","#2e3a42"],
-   client:"City of Surabaya", area:"12,400 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
-  {title:"Terrace Houses", place:"Bandung, Indonesia", year:2023, type:"Housing", size:"", img:"", c:["#b9a58a","#6b5a45"],
-   client:"Private", area:"3,200 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
-  {title:"Mountain Pavilion", place:"Bromo, Indonesia", year:2023, type:"Landscape", size:"", img:"", c:["#7d9a85","#2f4a3a"],
-   client:"National Parks Agency", area:"640 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
-  {title:"Riverside Masterplan", place:"Jakarta, Indonesia", year:2022, type:"Urban", size:"full", img:"", c:["#8aa0b3","#33465a"],
-   client:"DKI Jakarta", area:"28 ha", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
-  {title:"Studio Loft", place:"Yogyakarta, Indonesia", year:2022, type:"Interior", size:"", img:"", c:["#c9c3b8","#6e675c"],
-   client:"Private", area:"280 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
-  {title:"Market Hall", place:"Semarang, Indonesia", year:2021, type:"Culture", size:"wide", img:"", c:["#a98a78","#4d3427"],
-   client:"Semarang Municipality", area:"9,800 m²", text:"Describe the idea, the site, and what makes this project distinctive in two or three sentences."}
+/* Projects are edited in the CMS and stored in data/projects.json.
+   This list is only a backup shown if that file can't be loaded (e.g. opening index.html straight from disk). */
+let projects = [];
+const fallback = [
+  {"title": "Harbour Library", "place": "Surabaya, Indonesia", "year": 2024, "type": "Culture", "size": "wide", "client": "City of Surabaya", "area": "12,400 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Terrace Houses", "place": "Bandung, Indonesia", "year": 2023, "type": "Housing", "size": "", "client": "Private", "area": "3,200 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Mountain Pavilion", "place": "Bromo, Indonesia", "year": 2023, "type": "Landscape", "size": "", "client": "National Parks Agency", "area": "640 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Studio Loft", "place": "Yogyakarta, Indonesia", "year": 2022, "type": "Interior", "size": "", "client": "Private", "area": "280 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Chapel by the Lake", "place": "Lake Toba, Indonesia", "year": 2024, "type": "Culture", "size": "", "client": "Diocese of Medan", "area": "410 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Riverside Masterplan", "place": "Jakarta, Indonesia", "year": 2022, "type": "Urban", "size": "full", "client": "DKI Jakarta", "area": "28 ha", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Market Hall", "place": "Semarang, Indonesia", "year": 2021, "type": "Culture", "size": "wide", "client": "Semarang Municipality", "area": "9,800 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Fish Market Café", "place": "Jimbaran, Indonesia", "year": 2021, "type": "Interior", "size": "", "client": "Private", "area": "190 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Cliff House", "place": "Uluwatu, Indonesia", "year": 2021, "type": "Housing", "size": "wide", "client": "Private", "area": "860 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Courtyard School", "place": "Malang, Indonesia", "year": 2020, "type": "Culture", "size": "", "client": "Yayasan Pendidikan", "area": "5,600 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Tea Garden Walk", "place": "Puncak, Indonesia", "year": 2020, "type": "Landscape", "size": "", "client": "West Java Tourism", "area": "3.2 ha", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Station Plaza", "place": "Bandung, Indonesia", "year": 2020, "type": "Urban", "size": "", "client": "PT KAI", "area": "2.1 ha", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."},
+  {"title": "Concrete Atelier", "place": "Jakarta, Indonesia", "year": 2019, "type": "Interior", "size": "", "client": "Private", "area": "350 m²", "text": "Describe the idea, the site, and what makes this project distinctive in two or three sentences."}
 ];
 /* --------------------------------------------- */
 
 const grid = document.getElementById('grid');
 const filtersEl = document.querySelector('.filters');
-const bg = p => p.img ? `url('${p.img}')` : `linear-gradient(135deg,${p.c[0]},${p.c[1]})`;
+const palette = [["#6f7f8a","#2e3a42"],["#b9a58a","#6b5a45"],["#7d9a85","#2f4a3a"],["#8aa0b3","#33465a"],["#c9c3b8","#6e675c"],["#a98a78","#4d3427"]];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const url = s => encodeURI(String(s).replace(/^\/+/, '')).replace(/'/g, '%27');
+const bg = (p,i) => p.img ? `url('${url(p.img)}')`
+  : `linear-gradient(135deg,${palette[i % palette.length][0]},${palette[i % palette.length][1]})`;
 
-projects.forEach((p,i)=>{
-  const a = document.createElement('a');
-  a.href = '#project-'+i; a.className = 'card '+p.size; a.dataset.type = p.type;
-  a.innerHTML = `<div class="thumb"><div style="background-image:${bg(p)}"></div></div>
-    <div class="meta"><span>${p.title}</span><span>${p.place}, ${p.year}</span></div>`;
-  a.addEventListener('click',e=>{e.preventDefault();openProject(i)});
-  grid.appendChild(a);
-});
+function render(list){
+  projects = Array.isArray(list) ? list : fallback;
+  grid.innerHTML = ''; filtersEl.innerHTML = '';
+  projects.forEach((p,i)=>{
+    const a = document.createElement('a');
+    a.href = '#project-'+i; a.className = 'card '+(p.size||''); a.dataset.type = p.type||'';
+    const where = [p.place, p.year].filter(Boolean).join(', ');
+    a.innerHTML = `<div class="thumb"><div style="background-image:${bg(p,i)}"></div></div>
+      <div class="meta"><span>${esc(p.title)}</span><span>${esc(where)}</span></div>`;
+    a.addEventListener('click',e=>{e.preventDefault();openProject(i)});
+    grid.appendChild(a);
+  });
+  const types = [...new Set(projects.map(p=>p.type).filter(Boolean))];
+  if (types.length < 2) return;
+  ['All',...types].forEach((t,i)=>{
+    const b = document.createElement('button');
+    b.textContent = t; b.setAttribute('aria-pressed', i===0);
+    b.onclick = ()=>{
+      filtersEl.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b));
+      grid.querySelectorAll('.card').forEach(c=>c.hidden = t!=='All' && c.dataset.type!==t);
+    };
+    filtersEl.appendChild(b);
+  });
+}
 
-['All',...new Set(projects.map(p=>p.type))].forEach((t,i)=>{
-  const b = document.createElement('button');
-  b.textContent = t; b.setAttribute('aria-pressed', i===0);
-  b.onclick = ()=>{
-    filtersEl.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b));
-    grid.querySelectorAll('.card').forEach(c=>c.hidden = t!=='All' && c.dataset.type!==t);
-  };
-  filtersEl.appendChild(b);
-});
+fetch('data/projects.json',{cache:'no-cache'})
+  .then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); })
+  .catch(()=>fallback)
+  .then(render);
 
 const dlg = document.getElementById('dlg');
 function openProject(i){
   const p = projects[i];
-  document.getElementById('d-hero').style.backgroundImage = bg(p);
-  document.getElementById('d-title').textContent = p.title;
-  document.getElementById('d-text').textContent = p.text;
-  document.getElementById('d-meta').innerHTML =
-    `<dt>Location</dt><dd>${p.place}</dd><dt>Year</dt><dd>${p.year}</dd><dt>Type</dt><dd>${p.type}</dd><dt>Client</dt><dd>${p.client}</dd><dt>Area</dt><dd>${p.area}</dd>`;
+  document.getElementById('d-hero').style.backgroundImage = bg(p,i);
+  document.getElementById('d-title').textContent = p.title || '';
+  document.getElementById('d-text').textContent = p.text || '';
+  document.getElementById('d-meta').innerHTML = [
+    ['Location',p.place],['Year',p.year],['Category',p.type],['Client',p.client],['Size',p.area]
+  ].filter(r=>r[1]).map(r=>`<dt>${r[0]}</dt><dd>${esc(r[1])}</dd>`).join('');
+  document.getElementById('d-gallery').innerHTML = (p.gallery||[])
+    .map(g=>`<img src="${url(g)}" alt="${esc(p.title)}" loading="lazy">`).join('');
+  dlg.scrollTop = 0;
   dlg.showModal();
 }
 document.getElementById('close').onclick = ()=>dlg.close();
