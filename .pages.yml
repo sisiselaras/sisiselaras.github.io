@@ -1,4 +1,4 @@
-media:
+amedia:
   input: images
   output: images
 
@@ -8,7 +8,10 @@ content:
     type: file
     path: data/projects.json
     format: json
-    list: true
+    list:
+      collapsible:
+        collapsed: true
+        summary: "{title} ({year})"
     fields:
       - name: title
         label: Project name
