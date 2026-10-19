@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Studio Name — Architecture & Landscape</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <meta name="description" content="Architecture, landscape and interior design studio.">
 <script>
 try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}
@@ -11,7 +14,8 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 <style>
 :root{
   --bg:#fff; --fg:#111; --muted:#777; --line:#e4e4e4; --soft:#f3f3f1;
-  --font:"Helvetica Neue",Helvetica,Arial,"Inter",system-ui,sans-serif;
+  --font:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --head:"Helvetica Neue",Helvetica,Arial,"Inter",system-ui,sans-serif;
   --pad:clamp(16px,2.5vw,36px);
   --ease:cubic-bezier(.2,.7,.2,1);
 }
@@ -112,6 +116,14 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
   .card .thumb,.card.wide .thumb,.card.full .thumb{aspect-ratio:4/3}
   .facts{grid-template-columns:1fr}
 }
+
+/* Fonts: Helvetica for headings, header bar and project names; Plex Mono for everything else */
+header,.logo,h1,h2,h3,.meta span:first-child,.facts strong,.big-mail,.mobile-nav a{font-family:var(--head)}
+body{font-size:.95rem}
+.hero p{font-size:.95rem}
+.about p,.dlg-cols p{font-size:1rem}
+.meta,.facts span,.offices p,.filters button{font-size:.85rem}
+
 /* Motion */
 @keyframes rise{from{opacity:0;transform:translateY(32px)}}
 @keyframes fade{from{opacity:0}}
@@ -226,6 +238,7 @@ const fallback = [
 const grid = document.getElementById('grid');
 const filtersEl = document.querySelector('.filters');
 
+/* Motion helpers */
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 const ease = 'cubic-bezier(.2,.7,.2,1)';
 const io = new IntersectionObserver(es => {
@@ -285,9 +298,7 @@ function render(list){
     a.addEventListener('click',e=>{e.preventDefault();openProject(i)});
     grid.appendChild(a);
   });
-
   reveal(grid.querySelectorAll('.card'));
-  
   const types = [...new Set(projects.map(p=>p.type).filter(Boolean))];
   if (types.length < 2) return;
   ['All',...types].forEach((t,i)=>{
@@ -296,13 +307,13 @@ function render(list){
     b.onclick = ()=>{
       filtersEl.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b));
       let n = 0;
-grid.querySelectorAll('.card').forEach(c => {
-  c.hidden = t!=='All' && c.dataset.type!==t;
-  if (c.hidden) return;
-  io.unobserve(c); c.classList.remove('pre');
-  if (!reduce.matches) c.animate([{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'none'}],
-    {duration:600,delay:n++*60,easing:ease,fill:'backwards'});
-});
+      grid.querySelectorAll('.card').forEach(c => {
+        c.hidden = t!=='All' && c.dataset.type!==t;
+        if (c.hidden) return;
+        io.unobserve(c); c.classList.remove('pre');
+        if (!reduce.matches) c.animate([{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'none'}],
+          {duration:600,delay:n++*60,easing:ease,fill:'backwards'});
+      });
     };
     filtersEl.appendChild(b);
   });
